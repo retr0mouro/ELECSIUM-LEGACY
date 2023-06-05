@@ -1,52 +1,134 @@
 #include "movimento.h"
 
-/*
- *
- * Falta muita coisa, incluindo por exemplo:
- * - o mapa
- * - os monstros
- * - a fila de prioridade para saber quem se move
- * - o que está em cada casa
- *
- */
 
-/*
- *
- * Um pequeno exemplo que mostra o que se pode fazer
- */
+void resume(STATE *st,MOB *mob, AUDIO *audios){
+	init_color(COLOR_CHEGADA,755,0,755);
+	init_pair(CHEGADA,COLOR_BLACK,COLOR_CHEGADA);
 
-void repeat(STATE *st,int nrows){
-	menu1(st);
+
+	pausa:
+	menuPause(st,audios);
     clear();
-    drawMap(st);
-	
-	int x = rand() % 52;
-	int y = rand() % 209;
+	//jogar = 1;
+	goto ciclo;
+
+	//ciclo---------------------------------------------------------------------------------------------------------------
+
+	ciclo:
+	while (verificaHP(st)){
+		if(verificaFloor(st) == 0) victory(st,audios);
+		clear();
+		redrawMap(st);
+	move(NROWS - 1, 0);
+		attron(COLOR_PAIR(COLOR_BLUE));
+		printw("(%d,%d) %d %d %d",mob[1]->mobX,mob[1]->mobY,st->floor, NROWS,NCOLS);//NCOLS, st->playerX, st->playerY, st->objetivoX, st->objetivoY, NROWS);
+		attroff(COLOR_PAIR(COLOR_BLUE));
+		
+
+
+		//Funcoes para luz
+		luz(st);//ligar
+		verificaLuz(st);
+		verificaLuz2(st);
+
+
+
+		//menus e jogador
+		draw_player(st);
+		drawHP();
+		drawMP();
+		drawHealth(st);
+		drawMana(st);
+
+
+
+
+		mvaddch(st->objetivoX,st->objetivoY,(int) 'V' | COLOR_PAIR(CHEGADA));
+		movimento_mob(mob,st, audios);
+		
+		
+		
+		
+		drawElec(st);
+		drawMobs(st,mob);
+		
+		
+		cleanMobs(st,mob); 
+		
+		
+		
+		
+		//Print da vizinhaça do jogador;
+		/*mvaddch(st->playerX - 1, st->playerY - 1, st->map[st->playerX - 1][st->playerY - 1]);
+		mvaddch(st->playerX - 1, st->playerY + 0, st->map[st->playerX - 1][st->playerY + 0]);
+		mvaddch(st->playerX - 1, st->playerY + 1, st->map[st->playerX - 1][st->playerY + 1]); 
+		mvaddch(st->playerX + 0, st->playerY - 1, st->map[st->playerX + 0][st->playerY - 1]); 
+		mvaddch(st->playerX + 0, st->playerY + 1, st->map[st->playerX + 0][st->playerY + 1]);
+		mvaddch(st->playerX + 1, st->playerY - 1, st->map[st->playerX + 1][st->playerY - 1]);
+		mvaddch(st->playerX + 1, st->playerY + 0, st->map[st->playerX + 1][st->playerY + 0]);
+		mvaddch(st->playerX + 1, st->playerY + 1, st->map[st->playerX + 1][st->playerY + 1]);*/
+
+
+		
+		move(st->playerX, st->playerY);
+		
+
+		if(update(st,mob,audios) == 0) {
+			goto pausa;
+			break;
+		}
+	}
+	st->sound = 11; 
+	effects(st, audios); 
+	endwin(); 
+	exit(0); 
+	FREE_MOB(mobs); 
+	return;
+}
+
+void repeat(STATE *st,MOB *mob, AUDIO *audios){
+	if(verificaHP(st) == 0){
+		menuNoob(st); 
+		FREE_MOB(mobs);
+		endwin();
+		exit(0);
+		return;
+	}
+	init_color(COLOR_CHEGADA,755,0,755);
+	init_pair(CHEGADA,COLOR_BLACK,COLOR_CHEGADA);
+	menu1(st, audios);
+    clear();
+
+	som(st, audios);
+    drawMap(st,NROWS,NCOLS);
+	//initialize(st);  
+	//distancia(st,st->playerX,st->playerY,1); 
+
+
+	int x = rand() % (NROWS - 7);
+	int y = rand() % (NCOLS - 2);
 	while(1){
 		if(st->map[x][y] != (int) '#'){
     		st->objetivoX = x;
     		st->objetivoY = y;
 			break;
 		}else{
-			x = rand() % 52;
-			y = rand() % 209;
+			x = rand() % (NROWS - 7);
+			y = rand() % (NCOLS - 2);
 		}
 	}
-	st->objetivoX = x;
-	st->objetivoY = y;
-	
 
 	
-	x = rand() % 52;
-	y = rand() % 209;
+	x = rand() % (NROWS - 7);
+	y = rand() % (NCOLS - 2);
 	while(1){
 		if(st->map[x][y] != (int) '#'){
     		st->playerX = x;
     		st->playerY = y;
 			break;
 		}else{
-			x = rand() % 52;
-			y = rand() % 209;
+			x = rand() % (NROWS - 7);
+			y = rand() % (NCOLS - 2);
 		}
 	}
 	st->playerX = x;
@@ -54,54 +136,81 @@ void repeat(STATE *st,int nrows){
     draw_player(st);
     
 	st->map[st->objetivoX][st->objetivoY] = (int) 'V';
-    mvaddch(st->objetivoX,st->objetivoY,(int) 'V'|A_REVERSE);
+    mvaddch(st->objetivoX,st->objetivoY,(int) 'V' | COLOR_PAIR(CHEGADA));
+	gera_elecsium(st);
+	gera_mobs(st,mob);
+	mobs_are_awake(mob,st);
     refresh();
 
-	
-	while (1){
-	move(nrows - 1, 0);
+	//ciclo------------------------------------------------------ ---------------------------------------------------------
+	while (verificaHP(st) == 1){
+		if(verificaFloor(st) == 0) victory(st,audios);
+		clear();
+		redrawMap(st);
+	move(NROWS - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
-		printw("(%d, %d) %d %d", st->playerX, st->playerY, st->objetivoX, st->objetivoY);
+		printw("(%d,%d) %d %d %d",mob[1]->mobX,mob[1]->mobY,st->floor, NROWS,NCOLS);//NCOLS, st->playerX, st->playerY, st->objetivoX, st->objetivoY, NROWS);
 		attroff(COLOR_PAIR(COLOR_BLUE));
+		
+
+
+		//Funcoes para luz
+		luz(st);//ligar
+		verificaLuz(st);
+		verificaLuz2(st);
+
+
+
+		//menus e jogador
 		draw_player(st);
+		drawHP();
+		drawMP();
 		drawHealth(st);
 		drawMana(st);
-		//attron(COLOR_PAIR(COLOR_YELLOW));
-		mvaddch(st->playerX - 1, st->playerY - 1, st->map[st->playerX - 1][st->playerY - 1]);
-		mvaddch(st->playerX - 1, st->playerY + 0, st->map[st->playerX - 1][st->playerY + 0]);
-		mvaddch(st->playerX - 1, st->playerY + 1, st->map[st->playerX - 1][st->playerY + 1]);
-		mvaddch(st->playerX + 0, st->playerY - 1, st->map[st->playerX + 0][st->playerY - 1]);
-		mvaddch(st->playerX + 0, st->playerY + 1, st->map[st->playerX + 0][st->playerY + 1]);
-		mvaddch(st->playerX + 1, st->playerY - 1, st->map[st->playerX + 1][st->playerY - 1]);
-		mvaddch(st->playerX + 1, st->playerY + 0, st->map[st->playerX + 1][st->playerY + 0]);
-		mvaddch(st->playerX + 1, st->playerY + 1, st->map[st->playerX + 1][st->playerY + 1]);
-        //attroff(COLOR_PAIR(COLOR_YELLOW));
+
+
+
+
+		mvaddch(st->objetivoX,st->objetivoY,(int) 'V' | COLOR_PAIR(CHEGADA));
+		movimento_mob(mob,st, audios);
+		
+		
+		
+		
+		drawElec(st);
+		drawMobs(st,mob);
+		
+		
+		cleanMobs(st,mob);
+		
+		
+		
 		move(st->playerX, st->playerY);
-		//st.playerMP--;
-		if(update(st) == 0) {
-			repeat(st,nrows);
+		
+
+		if(update(st,mob,audios) == 0) {
+			resume(st,mob,audios);
 			break;
 		}
 	}
+	st->sound = 11; 
+	effects(st, audios); 
+	endwin(); 
+	exit(0); 
+	FREE_MOB(mobs); 
+	return;
 }
 
 
 int main() {
     initscr();
-    //int map[59][211] = {{0}};
-	//STATE st = {12,20,0,0,0,0};
-	WINDOW *wnd = initscr();
-    //wborder(wnd,'#','#','#','#','#','#','#','#');
-	int ncols, nrows;
-	getmaxyx(wnd,nrows,ncols);
-    (void) ncols;
+	MALLOC_MOB(mobs);
 
 	srand(time(NULL));
 
 	
 	start_color();
 
-    //int x1 = rand() % 209, x2 = rand() % 209, y1 = rand() % 57, y2 = rand() % 57;
 
 	cbreak();
 	noecho();
@@ -113,80 +222,7 @@ int main() {
         init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
         init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
 
-
-	repeat(&st,nrows);
-	/**
-	 * Este código está muito mal escrito!
-	 * Deveria existir uma função chamada draw_player!
-	 *
-	 * Se estamos a desenhar uma luz à volta do jogador
-	 * deveria existir uma função chamada draw_light!
-	 *
-	 */
-    /*menu1(&st);
-    clear();
-    drawMap(&st);
-	
-	int x = rand() % 52;
-	int y = rand() % 209;
-	while(1){
-		if(st.map[x][y] != (int) '#'){
-    		st.objetivoX = x;
-    		st.objetivoY = y;
-			break;
-		}else{
-			x = rand() % 52;
-			y = rand() % 209;
-		}
-	}
-	st.objetivoX = x;
-	st.objetivoY = y;
-	
-
-
-	x = rand() % 52;
-	y = rand() % 209;
-	while(1){
-		if(st.map[x][y] != (int) '#'){
-    		st.playerX = x;
-    		st.playerY = y;
-			break;
-		}else{
-			x = rand() % 52;
-			y = rand() % 209;
-		}
-	}
-	st.playerX = x;
-	st.playerY = y;
-    draw_player(&st);
-    
-	st.map[st.objetivoX][st.objetivoY] = (int) 'V';
-    mvaddch(st.objetivoX,st.objetivoY,(int) 'V'|A_REVERSE);
-    refresh();
-	while(1) {
-		move(nrows - 1, 0);
-		attron(COLOR_PAIR(COLOR_BLUE));
-		printw("(%d, %d) %d %d", st.playerX, st.playerY, st.objetivoX, st.objetivoY);
-		attroff(COLOR_PAIR(COLOR_BLUE));
-		draw_player(&st);
-		drawHealth(&st);
-		drawMana(&st);
-		//attron(COLOR_PAIR(COLOR_YELLOW));
-		mvaddch(st.playerX - 1, st.playerY - 1, st.map[st.playerX - 1][st.playerY - 1]);
-		mvaddch(st.playerX - 1, st.playerY + 0, st.map[st.playerX - 1][st.playerY + 0]);
-		mvaddch(st.playerX - 1, st.playerY + 1, st.map[st.playerX - 1][st.playerY + 1]);
-		mvaddch(st.playerX + 0, st.playerY - 1, st.map[st.playerX + 0][st.playerY - 1]);
-		mvaddch(st.playerX + 0, st.playerY + 1, st.map[st.playerX + 0][st.playerY + 1]);
-		mvaddch(st.playerX + 1, st.playerY - 1, st.map[st.playerX + 1][st.playerY - 1]);
-		mvaddch(st.playerX + 1, st.playerY + 0, st.map[st.playerX + 1][st.playerY + 0]);
-		mvaddch(st.playerX + 1, st.playerY + 1, st.map[st.playerX + 1][st.playerY + 1]);
-        //attroff(COLOR_PAIR(COLOR_YELLOW));
-		move(st.playerX, st.playerY);
-		//st.playerMP--;
-		update(&st);
-		//player_move(&st,58);
-		repeat(&st,nrows);
-	}*/
-
+	initializeMobs(mobs);
+	repeat(&st,mobs,&audios);
 	return 0;
 }
