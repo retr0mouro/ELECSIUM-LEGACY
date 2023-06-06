@@ -833,8 +833,7 @@ void mob_morreu(MOB mob, STATE *st, AUDIO *audios) {
 
 // Função de combate, referente ao dano que é deferido ao mob
 void mob_levou_dano(MOB mob, STATE *st, AUDIO *audios) {
-  int errouAbala = rand() % 10;
-
+  
   int dificuldade = 4;
   if(st->dif == 2)
     dificuldade = 3;
