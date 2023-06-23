@@ -1,8 +1,9 @@
-#include "mapa.h"
+#include "movimento.h"
+//#include "utils.h"
 
 //DI 312
 
-#define DRAWPLAYER 47
+//#define DRAWPLAYER 47
 
 void draw_player(STATE *st){
 		//mvaddch(st.playerX, st.playerY, '@' | A_BOLD);
@@ -99,7 +100,7 @@ void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
 			st->playerY += dy;
 
 			st->sound = 6;
-			effects(st, audios);
+			effects(st,mob,audios);
 
 			if(st->playerMP > -1 && st->playerMP < 39){ 
 				st->playerMP += 10;
@@ -124,7 +125,7 @@ void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
 	
 		//caso o objetivo seja atingido
     	if(st->playerX == st->objetivoX && st->playerY == st->objetivoY){
-			effects(st, audios);
+			effects(st,mob,audios);
 			playerRandom(st,mob);
 			st->floor++;
 			st->mobs_TOTAIS = 0;
@@ -151,7 +152,7 @@ void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
 	
 		//caso o objetivo seja atingido
     	if(st->playerX == st->objetivoX && st->playerY == st->objetivoY){
-			effects(st, audios);
+			effects(st,mob,audios);
 			playerRandom(st,mob);
 			st->floor++;
 			st->mobs_TOTAIS = 0;
@@ -179,7 +180,7 @@ void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
 }
 
 
-void teletransporte(STATE *st, AUDIO *audios){
+void teletransporte(STATE *st,MOB *mobs,AUDIO *audios){
 
 	//JOGADA BAIXO
 	if(st->playanterior == 2){
@@ -205,7 +206,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -235,7 +236,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -272,7 +273,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -302,7 +303,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -339,7 +340,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -369,7 +370,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -406,7 +407,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -436,7 +437,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -473,7 +474,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -503,7 +504,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -540,7 +541,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -570,7 +571,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -607,7 +608,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -637,7 +638,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -674,7 +675,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	  }
@@ -704,7 +705,7 @@ void teletransporte(STATE *st, AUDIO *audios){
 
 
 	   st->sound = 7;
-	   effects(st, audios);
+	   effects(st,mobs,audios);
 
 	   break;
 	   }
@@ -745,11 +746,11 @@ int update(STATE *st,MOB *mob, AUDIO *audios) {
 		case KEY_C3:
 		case '3': st->playanterior = 3; do_movement_action(st, +1, +1,mob, audios); limpaLuz(st); return 1; break;
 		case 'Q':
-		case 'q': st->sound = 11; effects(st, audios); endwin(); exit(0); FREE_MOB(mobs); return 1; break;
+		case 'q': st->sound = 11; effects(st,mob,audios); endwin(); exit(0); FREE_MOB(mob); return 1; break;
 		case 'C':
 		case 'c': if(st->playerMP < 49 && st->playerMP > -1) st->playerMP++; return 1; break;
 		case 'O':
-		case 'o': st->sound = -2; som(st, audios); return 0;break;
+		case 'o': st->sound = -2; som(st,mob,audios); return 0;break;
 		case 'H':
 		case 'h': if(st->playerMP > 9){/*st->playerMP -= 10*/;st->playerX = st->objetivoX; st->playerY = st->objetivoY - 1; st->playerMAXMP = 0;} break;
 		case 'T':
@@ -758,7 +759,7 @@ int update(STATE *st,MOB *mob, AUDIO *audios) {
 					 ((st->playanterior == 1 || st->playanterior == 3 || st->playanterior == 7 || st->playanterior == 9) && st->playerMP > 14 && st->dif == 3) || 
 					 ((st->playanterior == 1 || st->playanterior == 3 || st->playanterior == 7 || st->playanterior == 9) && st->playerMP > 7 && st->dif != 3)){
 
-			          teletransporte(st, audios);
+			          teletransporte(st,mob,audios);
 		              st->playerMAXMP = 0;
 					  limpaLuz(st);
 				    }

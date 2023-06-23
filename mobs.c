@@ -1,4 +1,6 @@
-#include "music.h"
+#include "mobs.h"
+//#include "estado.h"
+//#include "utils.h"
 
 //Verificar se os andares não passam dos seus limites | FUNCIONA
 int verificaFloor(STATE *st){
@@ -814,7 +816,7 @@ void mob_morreu(MOB mob, STATE *st, AUDIO *audios) {
 
     if(mob->qual_mob == 3){
       st->sound = 9;
-      effects(st, audios);
+      effects(st,&mob,audios);
     }
 
     mob->awake = 0;

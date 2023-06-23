@@ -1,5 +1,6 @@
 #include "luz.h"
-
+/*#include "estado.h"
+#include "utils.h"*/
 
 
 int contaVizinhos1(STATE *st,int x,int y);

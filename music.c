@@ -1,4 +1,6 @@
-#include "estado.h"
+#include "music.h"
+//#include "estado.h"
+//#include "utils.h"
 
 //----------------------------------------
 
@@ -93,7 +95,7 @@ void background(STATE *st, AUDIO *audios){
 }
 
 
-void effects(STATE *st, AUDIO *audios){
+void effects(STATE *st,MOB *mobs,AUDIO *audios){
 
     //sound effect quando o jogador sai do jogo
     if(st->sound == 11){
@@ -252,7 +254,7 @@ void effects(STATE *st, AUDIO *audios){
 }
 
 
-void som(STATE *st, AUDIO *audios){
+void som(STATE *st,MOB *mobs,AUDIO *audios){
     background(st, audios);
-    effects(st, audios);
+    effects(st,mobs,audios);
 }

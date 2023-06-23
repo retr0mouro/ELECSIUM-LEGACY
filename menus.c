@@ -1,11 +1,12 @@
-#include "mobs.h"
+#include "menus.h"
+//#include "utils.h"
 
-#define HP 2
+/*#define HP 2
 #define HBAR 9
 #define MP 88
 #define MBAR 69
 #define ELSIU 110
-#define PAUSE 90
+#define PAUSE 90*/
 
 
 
@@ -57,7 +58,7 @@ void drawMana(STATE *st){
     delwin(mana);
 }
 
-void menuDiff(STATE *st, AUDIO *audios){
+void menuDiff(STATE *st,MOB *mobs, AUDIO *audios){
     //clear();
     WINDOW * menu = newwin(40,110,8,50);
     //wrefresh(menu);
@@ -105,7 +106,7 @@ void menuDiff(STATE *st, AUDIO *audios){
             break;
         case (int) 'q':
             st->sound = 11;
-            effects(st, audios);
+            effects(st,mobs,audios);
             delwin(menu);
             FREE_MOB(mobs);
             endwin();
@@ -116,11 +117,11 @@ void menuDiff(STATE *st, AUDIO *audios){
     //exit(0);
 }
 
-void menu1(STATE *st, AUDIO *audios){
+void menu1(STATE *st,MOB *mobs, AUDIO *audios){
 
     //inicializar audio
     st->sound = 0;
-    som(st, audios);
+    som(st,mobs,audios);
 
     clear();
     noecho();
@@ -159,32 +160,32 @@ void menu1(STATE *st, AUDIO *audios){
             clear();
             //endwin();
             delwin(menuIn);
-            menuDiff(st, audios);
+            menuDiff(st,mobs,audios);
             break;
         case (int) '2':
             st->race = 2;
             clear(); 
             //endwin();
             delwin(menuIn);
-            menuDiff(st, audios);
+            menuDiff(st,mobs,audios);
             break;
         case (int) '3':
             st->race = 3;
             clear();
             //endwin();
             delwin(menuIn);
-            menuDiff(st, audios);
+            menuDiff(st,mobs,audios);
             break;
         case (int) '4':
             st->race = 4;
             clear();
             //endwin();
             delwin(menuIn);
-            menuDiff(st, audios);
+            menuDiff(st,mobs,audios);
             break;
         case (int) 'q':
             st->sound = 11;
-            effects(st, audios);
+            effects(st,mobs,audios);
             delwin(menuIn);
             endwin();
             FREE_MOB(mobs);
@@ -199,7 +200,7 @@ void menu1(STATE *st, AUDIO *audios){
     }
 }
 
-void menuPause(STATE *st, AUDIO *audios){
+void menuPause(STATE *st, MOB *mobs,AUDIO *audios){
 
     clear();
     WINDOW * menu = newwin(20,110,8,50);
@@ -262,14 +263,14 @@ void menuPause(STATE *st, AUDIO *audios){
                 flag = 1;
                 if(cursor == 0){
                     st->sound = -3;
-                    som(st, audios);
+                    som(st,mobs,audios);
                     delwin(menu);
                     delwin(opt);
                     break;
                 }
                 else{
                     st->sound = 11;
-                    effects(st, audios);
+                    effects(st,mobs,audios);
                     delwin(menu);
                     delwin(opt);
                     endwin();
@@ -282,7 +283,7 @@ void menuPause(STATE *st, AUDIO *audios){
 
 }
 
-void victory(STATE *st, AUDIO *audios){
+void victory(STATE *st,MOB *mobs,AUDIO *audios){
     clear();
     WINDOW * winner = newwin(50,210,0,0);
     refresh();
@@ -307,6 +308,6 @@ void victory(STATE *st, AUDIO *audios){
     wrefresh(winner);
 
     st->sound = 5;
-    effects(st, audios);  
+    effects(st,mobs,audios);  
     delwin(winner);    
 }
