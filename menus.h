@@ -1,27 +1,23 @@
-//#include "estado.h"
-#include "mobs.h"
-
-/*#define HP 2
-#define HBAR 9
-#define MP 88
-#define MBAR 69
-#define ELSIU 110
-#define PAUSE 90*/
+#ifndef MENUS_H
+#define MENUS_H
+#include "estado.h"
 
 
 
 void drawHP();
 
-void drawHealth(STATE *st);
+void drawHealth(State *st);
 
 void drawMP();
 
-void drawMana(STATE *st);
+void drawMana(State *st);
 
-void menuDiff(STATE *st, MOB *mobs, AUDIO *audios);
+void menuDiff(State *st, Mob *mobs, Audio *audios);
 
-void menu1(STATE *st, MOB *mobs,AUDIO *audios);
+void menu1(State *st, Mob *mobs,Audio *audios);
 
-void menuPause(STATE *st, MOB *mobs,AUDIO *audios);
+void menuPause(State *st, Mob *mobs,Audio *audios);
 
-void victory(STATE *st,MOB *mobs,AUDIO *audios);
+void victory(State *st,Mob *mobs,Audio *audios);
+
+#ifndef

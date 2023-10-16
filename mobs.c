@@ -1,9 +1,11 @@
 #include "mobs.h"
-//#include "estado.h"
-//#include "utils.h"
+#include "estado.h"
+#include "utils.h"
+#include <ncurses.h>
+
 
 //Verificar se os andares não passam dos seus limites | FUNCIONA
-int verificaFloor(STATE *st){
+int verificaFloor(State *st){
 	switch(st->dif){
 		case 1:
 			if(st->floor < 11)
@@ -25,14 +27,14 @@ int verificaFloor(STATE *st){
 
 
 //Verificar se o jogador não morreu | FUNCIONA
-int verificaHP(STATE *st){
+int verificaHP(State *st){
   if(st->playerHP <= 0) return 0;
   return 1;
 }
 
 
 //Inicializar os mobs | FUNCIONA
-void initializeMobs(MOB *mobs){
+void initializeMobs(Mob *mobs){
   for(int i = 0;i < 30;i++){
     mobs[i]->mobX = i;
     mobs[i]->mobY = i + 2;
@@ -44,7 +46,7 @@ void initializeMobs(MOB *mobs){
 }
 
 
-/*int mobsOverlap(STATE *st,MOB *mobs){
+/*int mobsOverlap(State *st,Mob *mobs){
   for(int i = 0;i < st->mobs_TOTAIS;i++){
     for(int j = 0;j < st->mobs_TOTAIS;j++){
       if(mobs[i]->mobX == mobs[j]->mobX && mobs[i]->mobY == mobs[j]->mobY) return 1;
@@ -53,7 +55,7 @@ void initializeMobs(MOB *mobs){
   return 0;
 }*/
 
-void cleanMobs(STATE *st,MOB *mob){
+void cleanMobs(State *st,Mob *mob){
   for(int i = 0; mob[i]->indice ; i++){
     if(mob[i]->vida <= 0) {
       st->map[mob[i]->mobX][mob[i]->mobY] = '.';
@@ -69,7 +71,7 @@ void cleanMobs(STATE *st,MOB *mob){
 // Fixando o Y do mob, verifica na linha do mesmo, o local mais próximo possível
 // de ser uma casa para o mob, ou seja, não é parede, jogador, objetivo ou
 // elecsium
-int x_mais_perto(MOB mob, STATE *st) {
+int x_mais_perto(Mob mob, State *st) {
   int x_positivo = mob->mobX + 1;
   int x_negativo = mob->mobX - 1;
   int x_mais_perto;
@@ -90,7 +92,7 @@ int x_mais_perto(MOB mob, STATE *st) {
 // Fixando o X do mob, verifica na coluna do mesmo, o local mais próximo
 // possível de ser uma casa para o mob, ou seja, não é parede, jogador, objetivo
 // ou elecsium
-int y_mais_perto(MOB mob, STATE *st) {
+int y_mais_perto(Mob mob, State *st) {
   int y_positivo = mob->mobY + 1;
   int y_negativo = mob->mobY - 1;
   int y_mais_perto;
@@ -110,7 +112,7 @@ int y_mais_perto(MOB mob, STATE *st) {
 
 // Gera uma quantidade de elecsium aleatoriamente no mapa, dependendo da
 // dificuldade;   | FUNCIONA
-void gera_elecsium(STATE *st) {
+void gera_elecsium(State *st) {
   init_pair(ELEC,COLOR_BLACK,COLOR_CYAN);
   int dificuldade = 2;
   if (st->dif == 2)
@@ -140,7 +142,7 @@ void gera_elecsium(STATE *st) {
 
 // Verifica se existem paredes entre o jogador e o mob, returnando 0 se houver
 // uma parede entre eles
-int pode_snipar(MOB mob, STATE *st) {
+int pode_snipar(Mob mob, State *st) {
   int xDoMob = mob->mobX;
   int yDoMob = mob->mobY;
 
@@ -203,7 +205,7 @@ int pode_snipar(MOB mob, STATE *st) {
 }
 
 // Calcula a distancia entre o mob e o jogador.
-int distancia_ideal(MOB mob, STATE *st) {
+int distancia_ideal(Mob mob, State *st) {
   int distancia = 0;
   int xDoMob = mob->mobX;
   int yDoMob = mob->mobY;
@@ -259,7 +261,7 @@ int distancia_ideal(MOB mob, STATE *st) {
 }
 
 // Calcula a nova distância do jogador ao mob->
-int nova_distancia(int x, int y, STATE *st) {
+int nova_distancia(int x, int y, State *st) {
   int distancia = 0;
 
   while(x != st->playerX || y != st->playerY) {
@@ -313,7 +315,7 @@ int nova_distancia(int x, int y, STATE *st) {
 }
 
 // Calcula a distancia entre mobs || 
-int distancia_mobeal(MOB mob, MOB sta) {
+int distancia_mobeal(Mob mob, Mob sta) {
   int distancia = 0;
   int xDoMob = mob->mobX;
   int yDoMob = mob->mobY;
@@ -372,7 +374,7 @@ int distancia_mobeal(MOB mob, MOB sta) {
 
 // Gera mobs aleatoriamente no mapa, sendo que a quantidade varia com a
 // dificuldade escolhida, e o tipo de mobs varia aleatoriamente.
-void gera_mobs(STATE *st, MOB *mob) {
+void gera_mobs(State *st, Mob *mob) {
   if(verificaFloor(st) == 0) return;
 
     //init_pair(MOBS,COLOR_RED,CHAO);
@@ -532,7 +534,7 @@ void gera_mobs(STATE *st, MOB *mob) {
 
 // Verifica qual o indice do mob mais proximo da lista de mobs, tendo como ponto
 // de referencia o jogador
-int nearest_mob(MOB *mob, STATE *st) {
+int nearest_mob(Mob *mob, State *st) {
   int menos_vida = 0;
   int closest_mob = 0;
   int distancia = 696;
@@ -554,7 +556,7 @@ int nearest_mob(MOB *mob, STATE *st) {
 }
 
 // verifica qual o indice do mob mais proximo do player, excluindo o mob de referência
-int nearest_comrade(MOB mob, MOB *mobs, STATE *st) {
+int nearest_comrade(Mob mob, Mob *mobs, State *st) {
   int closest_mob = 0;
   int distancia = 696;
 
@@ -577,7 +579,7 @@ int esta_na_lista(int posicoes[], int posicao, int repeticoes) {
 }
 
 // Algoritmo para aproximar o mob do jogador
-void aproxima_do_player(MOB mob, STATE *st) {
+void aproxima_do_player(Mob mob, State *st) {
   int posicao = rand() % 8;
   int posicoes[8];
   int repeticoes = 0;
@@ -669,7 +671,7 @@ void aproxima_do_player(MOB mob, STATE *st) {
 }
 
 // Algoritmo de fuga para os mobs covardes, ou seja, fogem se sozinhos
-void foge_do_player(MOB mob, STATE *st) {
+void foge_do_player(Mob mob, State *st) {
   int posicao = rand() % 8;
   int posicoes[8];
   int repeticoes = 0;
@@ -762,7 +764,7 @@ void foge_do_player(MOB mob, STATE *st) {
 
 // Consoante a distância do mob ao jogador, determina se o mob tem movimento/se
 // está acordado.
-void mobs_are_awake(MOB *mobs, STATE *st) {
+void mobs_are_awake(Mob *mobs, State *st) {
 
   for(int i = 0; mobs[i]->indice; i++) {
     switch (st->dif) {
@@ -783,7 +785,7 @@ void mobs_are_awake(MOB *mobs, STATE *st) {
 }
 
 // Função para despertar os mobs, utilizadas pelos mobs espertos
-void mob_awakes_mob(MOB mob, MOB *mobs, STATE *st) {
+void mob_awakes_mob(Mob mob, Mob *mobs, State *st) {
   for(int i = 0; mob->awake && mobs[i]->indice; i++) {
     switch (st->dif) {
     case 1:
@@ -802,7 +804,7 @@ void mob_awakes_mob(MOB mob, MOB *mobs, STATE *st) {
 }
 
 // Verifica a vida do mob para saber se foi derrotado
-void mob_morreu(MOB mob, STATE *st, AUDIO *audios) {
+void mob_morreu(Mob mob, State *st, Audio *audios) {
   init_color(CHAO,147 * 4, 157 * 4, 72 * 4);
   init_pair(COLOR_CHAO,CHAO,CHAO);
   int buff = 0;
@@ -834,7 +836,7 @@ void mob_morreu(MOB mob, STATE *st, AUDIO *audios) {
 }
 
 // Função de combate, referente ao dano que é deferido ao mob
-void mob_levou_dano(MOB mob, STATE *st, AUDIO *audios) {
+void mob_levou_dano(Mob mob, State *st, Audio *audios) {
   
   int dificuldade = 4;
   if(st->dif == 2)
@@ -867,7 +869,7 @@ void mob_levou_dano(MOB mob, STATE *st, AUDIO *audios) {
 }
 
 // Função de combatte, referente ao dano que o jogador tomou
-void mob_deu_dano(MOB mob, STATE *st) {
+void mob_deu_dano(Mob mob, State *st) {
   int dodge = rand() % 10;
 
   int dificuldade = 2;
@@ -914,7 +916,7 @@ void mob_deu_dano(MOB mob, STATE *st) {
 }
 
 // Algoritmo para o movimento do mob
-void movimento_mob(MOB *mobs, STATE *st, AUDIO *audios) {
+void movimento_mob(Mob *mobs, State *st, Audio *audios) {
   init_color(CHAO,147 * 4, 157 * 4, 72 * 4);
   init_pair(COLOR_CHAO,CHAO,CHAO);
   mobs_are_awake(mobs,st);

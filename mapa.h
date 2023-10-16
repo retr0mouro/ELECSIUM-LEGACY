@@ -1,20 +1,23 @@
-#include "luz.h"
-/*#include "estado.h"
-#include "utils.h"*/
+#ifndef MAPA_H
+#define MAPA_H
+#include "estado.h"
 
 
-int contaVizinhos1(STATE *st,int x,int y);
 
-int contaVizinhos2(STATE *st,int x,int y);
+int contaVizinhos1(State *st,int x,int y);
 
-void geraParedes1(STATE *st);
+int contaVizinhos2(State *st,int x,int y);
 
-void geraParedes2(STATE *st);
+void geraParedes1(State *st);
 
-void drawMap(STATE *st,int nrows,int ncols);
+void geraParedes2(State *st);
 
-void drawElec(STATE *st);
+void drawMap(State *st,int nrows,int ncols);
 
-void drawMobs(STATE *st,MOB *mobs);
+void drawElec(State *st);
 
-void redrawMap(STATE *st);
+void drawMobs(State *st,Mob *mobs);
+
+void redrawMap(State *st);
+
+#endif

@@ -1,8 +1,10 @@
 #include "luz.h"
+#include "utils.h"
+#include <ncurses.h>
 
 // Algumas funções auxiliares usadas na luz
 
-void verificaLuz(STATE *st){ // percorre o mapa todo e verifica se não tem luz que passou pelas paredes, começa da esquerda para a direita e de cima para baixo
+void verificaLuz(State *st){ // percorre o mapa todo e verifica se não tem luz que passou pelas paredes, começa da esquerda para a direita e de cima para baixo
   init_color(CHAO,147 * 4, 157 * 4, 72 * 4);
   init_pair(COLOR_CHAO,CHAO,CHAO);
   for(int i = 0; i<54; i++){
@@ -23,7 +25,7 @@ void verificaLuz(STATE *st){ // percorre o mapa todo e verifica se não tem luz 
   }
 }
 
-void verificaLuz2(STATE *st){ // percorre o mapa todo e verifica se não tem luz que passou pelas paredes, começa da direita para a esquerda e de cima para baixo
+void verificaLuz2(State *st){ // percorre o mapa todo e verifica se não tem luz que passou pelas paredes, começa da direita para a esquerda e de cima para baixo
   init_color(CHAO,147 * 4, 157 * 4, 72 * 4);
   init_pair(COLOR_CHAO,CHAO,CHAO);
   for(int i = 0; i < 54; i++){
@@ -45,7 +47,7 @@ void verificaLuz2(STATE *st){ // percorre o mapa todo e verifica se não tem luz
 }
 
 
-void limpaLuz(STATE *st){  // limpa a luz a cada movimento do jogador (só é implementada no movimentos)
+void limpaLuz(State *st){  // limpa a luz a cada movimento do jogador (só é implementada no movimentos)
   for(int l = 0;l < 53;l++){
     for(int c = 0;c < 210;c++){
       if(st->map[l][c] == '.'){
@@ -57,7 +59,7 @@ void limpaLuz(STATE *st){  // limpa a luz a cada movimento do jogador (só é im
 }
 
 /* JA NAO E USADA
-void redrawLuz(STATE *st){ 
+void redrawLuz(State *st){ 
   for(int l = 0;l < 53;l++){
     for(int c = 0;c < 210;c++){
       if(st->map[l][c] == '.'){
@@ -69,7 +71,7 @@ void redrawLuz(STATE *st){
 }
 */
 
-int objetivo(STATE *st, int x, int y){  // vé se tem objetivo/elsiu/mobs
+int objetivo(State *st, int x, int y){  // vé se tem objetivo/elsiu/mobs
   int flag = 0;
   if(st->map[x][y] == (int) 'V' || st->map[x][y] == (int) '^' || st->map[x][y] == (int) 'c' || st->map[x][y] == (int) 'p' || st->map[x][y] == (int) 's' || st->map[x][y] == (int) 'G' ){
     flag = 1;
@@ -78,21 +80,21 @@ int objetivo(STATE *st, int x, int y){  // vé se tem objetivo/elsiu/mobs
 }
 
 
-int verificaCima(STATE *st, int x, int y){ // caso tenha parede em baixo do player devolve 1 
+int verificaCima(State *st, int x, int y){ // caso tenha parede em baixo do player devolve 1 
   int flag = 0;
   if(st->playerY > y && (st->map[x+1][y] == '#' && st->map[x][y+1] == '#')) flag = 1;
   if(st->playerY < y && (st->map[x+1][y] == '#' && st->map[x][y-1] == '#')) flag = 1;
   return flag;
 }
 
-int verificaBaixo(STATE *st, int x, int y){ // caso tenha parede em cima do player devolve 1
+int verificaBaixo(State *st, int x, int y){ // caso tenha parede em cima do player devolve 1
   int flag = 0;
   if(st->playerY > y && (st->map[x-1][y] == '#' && st->map[x][y+1] == '#')) flag = 1;
   if(st->playerY < y && (st->map[x-1][y] == '#' && st->map[x][y-1] == '#')) flag = 1;
   return flag;
 }
 
-int paredeEntrePontosCima(STATE *st, int x, int y, int xant, int yant, int i3){ // vê a distancia entre dois pontos e verifica se existe parede entre eles
+int paredeEntrePontosCima(State *st, int x, int y, int xant, int yant, int i3){ // vê a distancia entre dois pontos e verifica se existe parede entre eles
   int distx = abs(x - xant);                                                   
   int disty = abs(y - yant);
   int flag = 0;
@@ -116,7 +118,7 @@ int paredeEntrePontosCima(STATE *st, int x, int y, int xant, int yant, int i3){ 
 return flag;
 }
 
-int paredeEntrePontosBaixo(STATE *st, int x, int y, int xant, int yant, int i3){ // o mesmo q a função de cima mas utilizada na luz de baixo
+int paredeEntrePontosBaixo(State *st, int x, int y, int xant, int yant, int i3){ // o mesmo q a função de cima mas utilizada na luz de baixo
   int distx = abs(x - xant);
   int disty = abs(y - yant);
   int flag = 0;
@@ -140,13 +142,13 @@ int paredeEntrePontosBaixo(STATE *st, int x, int y, int xant, int yant, int i3){
 return flag;
 }
 
-float declive(STATE *st, int x, int y) {  // vê o declive entre o jogador e a borda do mapa (x,y) o x e o y vão se movendo ao longo das bordas do mapa
+float declive(State *st, int x, int y) {  // vê o declive entre o jogador e a borda do mapa (x,y) o x e o y vão se movendo ao longo das bordas do mapa
   if (x - st->playerX == 0)
     return 40000; // n é possível dividir por 0
   return (float) ((y - st->playerY) * 1.0 / (x - st->playerX));
 }
 
-int equationX(STATE *st, int xb, int yb, int y) { // calcula a coordenada x utilizando a equação da reta
+int equationX(State *st, int xb, int yb, int y) { // calcula a coordenada x utilizando a equação da reta
   int xn = 0;                                     // xb : x da borda , yb : y da borda
   float m = declive(st, xb, yb), b = 0;         
   b = st->playerY - (m * st->playerX);
@@ -156,7 +158,7 @@ int equationX(STATE *st, int xb, int yb, int y) { // calcula a coordenada x util
   return xn;
 }
 
-int equationY(STATE *st, int xb, int yb, int x) { // calcula a coordenada y utilizando a equação da reta 
+int equationY(State *st, int xb, int yb, int x) { // calcula a coordenada y utilizando a equação da reta 
   int yn = 0;
   float m = declive(st, xb, yb), b = 0;
   b = st->playerY - (m * st->playerX);
@@ -169,7 +171,7 @@ int equationY(STATE *st, int xb, int yb, int x) { // calcula a coordenada y util
 
 //VISÃO MODO FACIL
 
-void direita(STATE *st) { // ilumina para a direita
+void direita(State *st) { // ilumina para a direita
   for (int i = 54; i > -1; i--) {
       if (declive(st, i, 210) == 40000) {
         for (int j = 1; st->playerY + j != 211; j++) {
@@ -199,7 +201,7 @@ void direita(STATE *st) { // ilumina para a direita
     }
 }
 
-void esquerda(STATE *st){ // ilumina para a esquerda
+void esquerda(State *st){ // ilumina para a esquerda
         for (int i4 = 0; i4 < 54; i4++) {
               if (declive(st, i4, 0) == 40000) {
                 for (int j2 = 1; st->playerY - j2 != 0; j2++) {
@@ -227,7 +229,7 @@ void esquerda(STATE *st){ // ilumina para a esquerda
   } 
 }
 
-void cima(STATE *st){ // ilumina para cima
+void cima(State *st){ // ilumina para cima
   for (int z = 211; z > -1; z--) { // z : Y do mapa
     if(st->map[st->playerX-1][st->playerY] == '#') break;
           if (declive(st, 0, z) == 0) {
@@ -262,7 +264,7 @@ void cima(STATE *st){ // ilumina para cima
   }
 }
 
-void baixo(STATE *st){ // ilumina para baixo
+void baixo(State *st){ // ilumina para baixo
   for (int z = 1; z < 211; z++) { // z : Y do mapa
     if(st->map[st->playerX+1][st->playerY] == '#') break;
           if (declive(st, 53, z) == 0) {
@@ -298,7 +300,7 @@ void baixo(STATE *st){ // ilumina para baixo
   } 
 } 
 
-void luznormal(STATE *st){ // junta todas as funções de iluminação
+void luznormal(State *st){ // junta todas as funções de iluminação
   direita(st);
   esquerda(st);
   baixo(st);
@@ -311,7 +313,7 @@ void luznormal(STATE *st){ // junta todas as funções de iluminação
 
 // VISAO DO TRYHARD
 
-int distancia(STATE *st, int x, int y){ // função para calcular a distância entre um ponto e o jogador e devolve uma flag para parar a iluminação caso passe de um certo raio
+int distancia(State *st, int x, int y){ // função para calcular a distância entre um ponto e o jogador e devolve uma flag para parar a iluminação caso passe de um certo raio
   int distx = abs(x - st->playerX);
   int disty = abs(y - st->playerY);
   int flag = 0, raio = 0;
@@ -324,7 +326,7 @@ int distancia(STATE *st, int x, int y){ // função para calcular a distância e
   return flag;
 }
 
-void direitath(STATE *st) { // ilumina a direita 
+void direitath(State *st) { // ilumina a direita 
   for (int i = 53; i > -1; i--) {
       if (declive(st, i, 210) == 40000) {
         for (int j = 1; st->playerY + j != 211; j++) {
@@ -360,7 +362,7 @@ void direitath(STATE *st) { // ilumina a direita
     }
 }
 
-void esquerdath(STATE *st){ // ilumina a esquerda 
+void esquerdath(State *st){ // ilumina a esquerda 
         for (int i4 = 0; i4 < 59; i4++) {
               if (declive(st, i4, 0) == 40000) {
                 for (int j2 = 1; st->playerY - j2 != 0; j2++) {
@@ -394,7 +396,7 @@ void esquerdath(STATE *st){ // ilumina a esquerda
   } 
 }
 
-void cimath(STATE *st){ // ilumina cima 
+void cimath(State *st){ // ilumina cima 
   for (int z = 211; z > -1; z--) {
     if(st->map[st->playerX-1][st->playerY] == '#') break;
           if (declive(st, 0, z) == 0) {
@@ -434,7 +436,7 @@ void cimath(STATE *st){ // ilumina cima
   }
 }
 
-void baixoth(STATE *st){ // ilumina baixo
+void baixoth(State *st){ // ilumina baixo
   for (int z = 0; z < 211; z++) {
     if(st->map[st->playerX+1][st->playerY] == '#') break;
           if (declive(st, 53, z) == 0) {
@@ -474,14 +476,14 @@ void baixoth(STATE *st){ // ilumina baixo
   } 
 } 
 
-void luzth(STATE *st){ // junta todas as funções para iluminar os outros modos
+void luzth(State *st){ // junta todas as funções para iluminar os outros modos
   direitath(st);
   esquerdath(st);
   baixoth(st);
   cimath(st);
 }
 
-void pintaLuz(STATE *st){
+void pintaLuz(State *st){
   init_color(CHAO,147 * 3, 157 * 3, 72 * 3);
   init_pair(COLOR_PONTO, COLOR_BLACK, CHAO);
   for(int i = 0; i < 54; i++){
@@ -493,7 +495,7 @@ void pintaLuz(STATE *st){
   }
 }
 
-void luz(STATE *st){ // junta a iluminação dos vários modos
+void luz(State *st){ // junta a iluminação dos vários modos
   if(st->dif < 2){
     luznormal(st);
   }else luzth(st);

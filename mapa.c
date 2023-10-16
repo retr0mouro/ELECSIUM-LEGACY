@@ -1,8 +1,10 @@
 #include "mapa.h"
+#include "estado.h"
+#include "utils.h"
+#include <ncurses.h>
 
 
-
-int contaVizinhos1(STATE *st,int x,int y){
+int contaVizinhos1(State *st,int x,int y){
     int vizinhos = 0;
     for(int i = -1;i < 2;i++){
         for(int j = -1;j < 2;j++){
@@ -13,7 +15,7 @@ int contaVizinhos1(STATE *st,int x,int y){
     return vizinhos;
 }
 
-int contaVizinhos2(STATE *st,int x,int y){
+int contaVizinhos2(State *st,int x,int y){
     int vizinhos = 0;
     for(int i = -2;i < 3;i++){
         for(int j = -2;j < 3;j++){
@@ -25,7 +27,7 @@ int contaVizinhos2(STATE *st,int x,int y){
 }
 
 
-void geraParedes1(STATE *st){
+void geraParedes1(State *st){
     for(int i = 2;i < 53;i++){
         for(int j = 2;j < 209;j++){
             if(contaVizinhos1(st,i,j) >= 5 || contaVizinhos2(st,i,j) <= 2) st->map[i][j] = (int) '#';
@@ -35,7 +37,7 @@ void geraParedes1(STATE *st){
 }
 
 
-void geraParedes2(STATE *st){
+void geraParedes2(State *st){
     for(int i = 2;i < 53;i++){
         for(int j = 2;j < 209;j++){
             if(contaVizinhos1(st,i,j) >= 5) st->map[i][j] = (int) '#';
@@ -48,7 +50,7 @@ void geraParedes2(STATE *st){
 
 
 
-void drawMap(STATE *st,int nrows,int ncols){
+void drawMap(State *st,int nrows,int ncols){
     init_color(CHAO,147 * 3, 157 * 3, 72 * 3);
     init_color(PAREDE,100 * 4, 64 * 4, 0 * 4);
     init_pair(COLOR_CHAO,CHAO,CHAO);
@@ -125,7 +127,7 @@ void drawMap(STATE *st,int nrows,int ncols){
     refresh();
 }
 
-void drawElec(STATE *st){
+void drawElec(State *st){
     init_pair(ELSIU,COLOR_BLACK,COLOR_CYAN);
     for(int i = 0; i < 54;i++){
         for(int j = 0;j < 211;j++){
@@ -134,7 +136,7 @@ void drawElec(STATE *st){
     }
 }
 
-void drawMobs(STATE *st,MOB *mobs){
+void drawMobs(State *st,Mob *mobs){
     init_pair(MOBS,COLOR_RED,CHAO);
     init_pair(BOSS,COLOR_CYAN,COLOR_RED);
     for(int i = 0;i < st->mobs_TOTAIS; i++){
@@ -165,7 +167,7 @@ void drawMobs(STATE *st,MOB *mobs){
     }
 }
 
-void redrawMap(STATE *st){
+void redrawMap(State *st){
     init_color(CHAO,147 * 4, 157 * 4, 72 * 4);
     init_color(PAREDE,100 * 4, 64 * 4, 0 * 4);
     init_pair(COLOR_CHAO,CHAO,CHAO);

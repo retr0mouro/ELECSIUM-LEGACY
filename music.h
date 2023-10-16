@@ -7,10 +7,12 @@
 //menu saÃ­da
 void menuNoob();
 
+
+
 //----------------------------------------
 
-void background(STATE *st, AUDIO *audios);
+void background(State *st, Audio *audios);
 
-void effects(STATE *st,MOB *mobs,AUDIO *audios);
+void effects(State *st,Mob *mobs,Audio *audios);
 
-void som(STATE *st,MOB *mobs,AUDIO *audios);
+void som(State *st,Mob *mobs,Audio *audios);

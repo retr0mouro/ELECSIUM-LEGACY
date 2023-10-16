@@ -1,13 +1,15 @@
+#include "estado.h"
 #include "game.h"
-//#include <ncurses.h>
+#include <stdbool.h>
+#include <ncurses.h>
 
 
 int main() {
-	AUDIO audios = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+	Audio audios = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
-	STATE st = {12,20,49,0,20,0,0,0,0,0,1,0,0,1,{{0}},0,5};
+	State st = {12,20,49,0,20,0,0,0,0,0,1,0,0,1,{{0}},0,5};
 
-	MOB mobs[30];
+	Mob mobs[30];
 	
     initscr();
 	MALLOC_MOB(mobs);

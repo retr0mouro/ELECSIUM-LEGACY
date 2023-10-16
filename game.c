@@ -1,8 +1,11 @@
 #include "game.h"
+#include "utils.h"
+#include <ncurses.h>
 
 
 
-void resume(STATE *st,MOB *mob, AUDIO *audios){
+
+void resume(State *st,Mob *mob, Audio *audios){
 	init_color(COLOR_CHEGADA,755,0,755);
 	init_pair(CHEGADA,COLOR_BLACK,COLOR_CHEGADA);
 
@@ -87,7 +90,7 @@ void resume(STATE *st,MOB *mob, AUDIO *audios){
 	return;
 }
 
-void repeat(STATE *st,MOB *mob, AUDIO *audios){
+void repeat(State *st,Mob *mob, Audio *audios){
 	if(verificaHP(st) == 0){
 		menuNoob(st); 
 		FREE_MOB(mob);

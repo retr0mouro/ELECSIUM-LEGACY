@@ -1,4 +1,6 @@
 #include "music.h"
+#include <ncurses.h>
+#include <SFML/Audio.h>
 //#include "estado.h"
 //#include "utils.h"
 
@@ -37,7 +39,7 @@ void menuNoob(){
 
 //----------------------------------------
 
-void background(STATE *st, AUDIO *audios){
+void background(State *st, Audio *audios){
 
     //continua a musica onde parou no jogo
     if (st->sound == -3){
@@ -95,7 +97,7 @@ void background(STATE *st, AUDIO *audios){
 }
 
 
-void effects(STATE *st,MOB *mobs,AUDIO *audios){
+void effects(State *st,Mob *mobs,Audio *audios){
 
     //sound effect quando o jogador sai do jogo
     if(st->sound == 11){
@@ -254,7 +256,7 @@ void effects(STATE *st,MOB *mobs,AUDIO *audios){
 }
 
 
-void som(STATE *st,MOB *mobs,AUDIO *audios){
+void som(State *st,Mob *mobs,Audio *audios){
     background(st, audios);
     effects(st,mobs,audios);
 }

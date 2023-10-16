@@ -1,12 +1,6 @@
-#include <stdio.h>
-//#include <stdlib.h>
-#include <unistd.h>
-#include <ncurses.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
+#ifndef ESTADO_H
+#define ESTADO_H
 #include <SFML/Audio.h>
-#include "utils.h"
 
 
 typedef struct state {
@@ -27,7 +21,7 @@ typedef struct state {
     int map[54][211];
     int sound;
     int playanterior;
-} STATE;
+} State;
 
 typedef struct mobs {
     int mobX;
@@ -36,7 +30,7 @@ typedef struct mobs {
     int qual_mob;
     int awake;
     int indice;
-} * MOB;
+} * Mob;
 
 
 
@@ -55,4 +49,6 @@ typedef struct audios{
     sfSoundBuffer* buffertp;
     sfSound* mk;
     sfSoundBuffer* buffermk;
-} AUDIO;
+} Audio;
+
+#endif

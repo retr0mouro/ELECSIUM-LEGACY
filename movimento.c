@@ -1,11 +1,13 @@
 #include "movimento.h"
-//#include "utils.h"
+#include "estado.h"
+#include "utils.h"
+#include <ncurses.h>
 
 //DI 312
 
 //#define DRAWPLAYER 47
 
-void draw_player(STATE *st){
+void draw_player(State *st){
 		//mvaddch(st.playerX, st.playerY, '@' | A_BOLD);
 		init_pair(DRAWPLAYER,COLOR_BLACK,CHAO);
 		switch (st->race)
@@ -30,13 +32,13 @@ void draw_player(STATE *st){
 }
 
 
-int flagMana(STATE *st){
+int flagMana(State *st){
 	if(st->playerMP == MAXMP) return 1;
 	return 0;
 }
 
 
-void playerRandom(STATE *st,MOB *mob){
+void playerRandom(State *st,Mob *mob){
 	initializeMobs(mob);
 	st->mobs_TOTAIS = 0;
 	int y = 0;
@@ -89,7 +91,7 @@ void playerRandom(STATE *st,MOB *mob){
     }
 
 
-void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
+void do_movement_action(State *st, int dx, int dy,Mob *mob, Audio *audios) {
 
 
 	if(st->playerMAXMP == 0){
@@ -180,7 +182,7 @@ void do_movement_action(STATE *st, int dx, int dy,MOB *mob, AUDIO *audios) {
 }
 
 
-void teletransporte(STATE *st,MOB *mobs,AUDIO *audios){
+void teletransporte(State *st,Mob *mobs,Audio *audios){
 
 	//JOGADA BAIXO
 	if(st->playanterior == 2){
@@ -721,7 +723,7 @@ void teletransporte(STATE *st,MOB *mobs,AUDIO *audios){
 
 
 
-int update(STATE *st,MOB *mob, AUDIO *audios) {
+int update(State *st,Mob *mob, Audio *audios) {
 	int key = getch();
 
 	if(key == '5') return 1; // retirar se necessario
